@@ -4,27 +4,15 @@
 
 ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bits) {
     eosio::check(has_auth(scope) || has_auth("zsw.init"_n), "You can only call setperms on a scope that belongs to you.");
-    eosio::print("test 1");
     auto tbl_permissions_scope = get_tbl_permissions(scope);
-    eosio::print("test 2");
     auto itr = tbl_permissions_scope.find(user.value);
-    eosio::print("test 3");
-
-    eosio::name ram_payer = scope;
-    eosio::print("test 4");
-
+    eosio::name ram_payer = has_auth(scope)?scope:_self;
     if( itr == tbl_permissions_scope.end() ) {
-    eosio::print("test 5");
-    
-        tbl_permissions_scope.emplace(_self, [&]( auto& row ) {
-    eosio::print("test 5.1");
+        tbl_permissions_scope.emplace(ram_payer, [&]( auto& row ) {
             row.user = user;
             row.perm_bits = perm_bits;
-    eosio::print("test 5.2");
         });
-    eosio::print("test 5.3");
     } else {
-    eosio::print("test 6");
         tbl_permissions_scope.modify(itr, ram_payer, [&]( auto& row ) {
             row.user = user;
             row.perm_bits = perm_bits;
