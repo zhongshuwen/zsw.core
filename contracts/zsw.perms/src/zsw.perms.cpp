@@ -15,10 +15,14 @@ ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bi
 
     if( itr == tbl_permissions_scope.end() ) {
     eosio::print("test 5");
-        tbl_permissions_scope.emplace(ram_payer, [&]( auto& row ) {
+    
+        tbl_permissions_scope.emplace(_self, [&]( auto& row ) {
+    eosio::print("test 5.1");
             row.user = user;
             row.perm_bits = perm_bits;
+    eosio::print("test 5.2");
         });
+    eosio::print("test 5.3");
     } else {
     eosio::print("test 6");
         tbl_permissions_scope.modify(itr, ram_payer, [&]( auto& row ) {
