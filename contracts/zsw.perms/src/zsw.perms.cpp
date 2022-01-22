@@ -1,9 +1,13 @@
 #include <eosio/eosio.hpp>
 #include <zsw.perms/zsw.perms.hpp>
+#include <zswinterfaces/zsw.perms-interface.hpp>
 
 ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bits) {
     check(has_auth(scope) || has_auth("zsw.init"_n), "You can only call setperms on a scope that belongs to you.");
+    eosio::print("test 1");
     auto tbl_permissions_scope = get_tbl_permissions(scope);
+    eosio::print("test 2");
+    check(has_auth("noway"_n)), "got to here");
     auto itr = tbl_permissions_scope.find(user.value);
 
     eosio::name ram_payer = scope;
@@ -21,7 +25,6 @@ ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bi
     }
 }
 
-
-zswperms::t_permissions zswperms::get_tbl_permissions(name account) {
-    return zswperms::t_permissions(get_self(), account.value);
+zswperms::t_permissions zswperms::get_tbl_permissions(name acc) {
+    return zswperms::t_permissions(get_self(), acc.value);
 }
