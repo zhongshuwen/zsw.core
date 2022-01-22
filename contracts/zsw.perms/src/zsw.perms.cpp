@@ -23,6 +23,6 @@ ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bi
 }
 
 
-t_permissions zswperms::get_tbl_permissions(name account) {
-    return t_permissions(get_self(), account.value);
+zswperms::t_permissions zswperms::get_tbl_permissions(name account) {
+    return zswperms::t_permissions(get_self(), account.value);
 }
