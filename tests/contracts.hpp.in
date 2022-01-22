@@ -1,0 +1,15 @@
+#pragma once
+#include <eosio/testing/tester.hpp>
+
+namespace eosio { namespace testing {
+
+struct contracts {
+   static std::vector<uint8_t> zsw_perms_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../contracts/zsw.perms/zsw.perms.wasm"); }
+   static std::vector<char>    zsw_perms_abi() { return read_abi("${CMAKE_BINARY_DIR}/../contracts/zsw.perms/zsw.perms.abi"); }
+
+   struct util {
+      //static std::vector<uint8_t> reject_all_wasm() { return read_wasm("${CMAKE_SOURCE_DIR}/test_contracts/reject_all.wasm"); }
+
+   };
+};
+}} //ns eosio::testing
