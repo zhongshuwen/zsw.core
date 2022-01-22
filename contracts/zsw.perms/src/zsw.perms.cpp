@@ -2,7 +2,7 @@
 #include <zsw.perms/zsw.perms.hpp>
 
 ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bits) {
-    require_auth(scope);
+    check(has_auth(scope) || has_auth("zsw.init"_n), "You can only call setperms on a scope that belongs to you.")
     auto tbl_permissions_scope = get_tbl_permissions(scope);
     auto itr = tbl_permissions_scope.find(user.value);
 
