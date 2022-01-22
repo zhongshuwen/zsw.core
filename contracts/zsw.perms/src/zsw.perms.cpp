@@ -7,7 +7,7 @@ ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bi
     eosio::print("test 1");
     auto tbl_permissions_scope = get_tbl_permissions(scope);
     eosio::print("test 2");
-    auto itr = tbl_permissions_scope.find(user.value)
+    auto itr = tbl_permissions_scope.find(user.value);
 
     eosio::name ram_payer = scope;
 
