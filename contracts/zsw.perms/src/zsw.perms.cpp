@@ -18,7 +18,6 @@ ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bi
             row.perm_bits = perm_bits;
         });
     }
-    eosio::print("test 7");
 }
 
 zswperms::t_permissions zswperms::get_tbl_permissions(name acc) {
