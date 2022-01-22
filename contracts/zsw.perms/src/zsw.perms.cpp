@@ -1,5 +1,5 @@
 #include <eosio/eosio.hpp>
-#include <zsw.perms.hpp>
+#include <zsw.perms/zsw.perms.hpp>
 
 ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bits) {
     require_auth(scope);
