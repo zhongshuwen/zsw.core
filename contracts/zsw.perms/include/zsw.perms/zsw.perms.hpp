@@ -8,6 +8,7 @@ using namespace eosio;
 class [[eosio::contract("zsw.perms")]] zswperms : public contract {
    public:
       using contract::contract;
+
       /**
        * Set Permissions.
        *
@@ -29,16 +30,9 @@ class [[eosio::contract("zsw.perms")]] zswperms : public contract {
    private:
     //Scope: owner
     TABLE s_permissions {
-        uint64_t         asset_id;
-        name             collection_name;
-        name             schema_name;
-        int32_t          template_id;
-        name             ram_payer;
-        vector <asset>   backed_tokens;
-        vector <uint8_t> immutable_serialized_data;
-        vector <uint8_t> mutable_serialized_data;
-
-        uint64_t primary_key() const { return asset_id; };
+      eosio::name user;
+      uint128_t perm_bits;
+      uint64_t primary_key() const { return user.value; }
     };
 
     typedef multi_index <name("permissions"), s_permissions> t_permissions;
