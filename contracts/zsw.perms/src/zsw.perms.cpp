@@ -1,7 +1,6 @@
 #include <eosio/eosio.hpp>
 #include <zsw.perms/zsw.perms.hpp>
 
-namespace zswcore {
 ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bits) {
     require_auth(scope);
     auto tbl_permissions_scope = get_tbl_permissions(scope);
@@ -26,5 +25,4 @@ ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bi
 
 t_permissions zswperms::get_tbl_permissions(name account) {
     return t_permissions(get_self(), account.value);
-}
 }
