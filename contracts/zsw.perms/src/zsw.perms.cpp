@@ -5,7 +5,6 @@ ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bi
     require_auth(scope);
     auto tbl_permissions_scope = get_tbl_permissions(scope);
     auto itr = tbl_permissions_scope.find(user.value);
-    eosio::check( itr != tbl_permissions_scope.end(), "table val not set" );
 
     eosio::name ram_payer = scope;
 
