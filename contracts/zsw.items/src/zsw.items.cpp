@@ -63,7 +63,7 @@ ACTION zswitems::mkschema(
 
     require_auth(authorizer);
     check(
-        zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_SCHEMA!=0,
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_SCHEMA)!=0,
         "authorizer is not allowed to create new schemas"
     );
 
@@ -95,7 +95,7 @@ ACTION zswitems::mkissuer(
 
     require_auth(authorizer);
     check(
-        zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_ISSUER!=0,
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_ISSUER)!=0,
         "authorizer is not allowed to create new issuers"
     );
 
@@ -123,7 +123,7 @@ ACTION zswitems::mkroyaltyusr(
     require_auth(newroyaltyusr);
     require_auth(authorizer);
     check(
-        zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_ROYALTY_USER!=0,
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_ROYALTY_USER)!=0,
         "authorizer is not allowed to create royalty users"
     );
 
@@ -167,7 +167,7 @@ ACTION zswitems::mkcollection(
 
     require_auth(authorizer);
     check(
-        zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_COLLECTION!=0,
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_COLLECTION)!=0,
         "authorizer is not allowed to create collections"
     );
 
@@ -215,7 +215,7 @@ ACTION zswitems::mkitem(
     require_auth(authorizer);
     require_auth(ram_payer);
     check(
-        zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_ITEM!=0,
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_ITEM)!=0,
         "authorizer is not allowed to create new items"
     );
     check(schema_name.value==name("").value, "schemas/metadata not yet supported!");
