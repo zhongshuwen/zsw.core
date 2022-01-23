@@ -85,13 +85,13 @@ ACTION zswitems::mkschema(
 
 ACTION zswitems::mkissuer(
     name authorizer,
-    name newissuer,
+    name issuer_name,
     uint128_t zsw_id,
     uint128_t alt_id,
     uint128_t permissions,
     uint32_t status
 ) {
-    require_auth(newissuer);
+    require_auth(issuer_name);
 
     require_auth(authorizer);
     check(
@@ -100,11 +100,11 @@ ACTION zswitems::mkissuer(
     );
 
 
-    auto itr = tbl_issuerstatus.find(newissuer.value);
+    auto itr = tbl_issuerstatus.find(issuer_name.value);
     check(itr == tbl_issuerstatus.end(), "this issuer user already exists!");
 
-    tbl_issuerstatus.emplace(newissuer, [&]( auto& _issuer_status ) {
-        _issuer_status.user_name = newissuer;
+    tbl_issuerstatus.emplace(issuer_name, [&]( auto& _issuer_status ) {
+        _issuer_status.issuer_name = issuer_name;
         _issuer_status.zsw_id = zsw_id;
         _issuer_status.alt_id = alt_id;
         _issuer_status.permissions = permissions;
@@ -353,12 +353,12 @@ void zswitems::internal_transfer(
                 _item_balance.balance = 0;
             });
         }
+        
+        auto to_itr = to_item_balances.find(item_id);
 
-
-        auto to_itr = to_item_balances.find(item_balance_itr->item_id);
         if(to_itr == to_item_balances.end()){
             to_item_balances.emplace(item_itr->ram_payer, [&](auto &_item_balance) {
-                _item_balance.item_id = item_balance_itr->item_id;
+                _item_balance.item_id = item_id;
                 _item_balance.status = item_status | ITEM_BALANCE_STATUS_SECOND_HAND;
                 _item_balance.balance = amount;
             });

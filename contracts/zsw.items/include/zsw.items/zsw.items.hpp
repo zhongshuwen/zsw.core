@@ -28,7 +28,7 @@ class [[eosio::contract("zsw.items")]] zswitems : public contract {
       using contract::contract;
       ACTION mkissuer(
          name authorizer,
-         name newissuer,
+         name issuer_name,
          uint128_t zsw_id,
          uint128_t alt_id,
          uint128_t permissions,
@@ -36,7 +36,7 @@ class [[eosio::contract("zsw.items")]] zswitems : public contract {
       );
       ACTION mkroyaltyusr(
          name authorizer,
-         name newissuer,
+         name newroyaltyusr,
          uint128_t zsw_id,
          uint128_t alt_id,
          uint32_t status
@@ -221,7 +221,7 @@ private:
     t_items  tbl_items  = t_items(get_self(), get_self().value);
     t_item_balances get_tbl_item_balances(eosio::name account);
 
-    void zswitems::internal_transfer(
+    void internal_transfer(
       name minter,
       name from,
       name to,
@@ -230,7 +230,7 @@ private:
       string memo,
       name scope_payer
    );
-   void zswitems::internal_mint(
+   void internal_mint(
       name minter,
       name to,
       vector <uint64_t> item_ids,
@@ -238,7 +238,7 @@ private:
       string memo,
       name scope_payer
    );
-   void zswitems::notify_collection_accounts(
+   void notify_collection_accounts(
       name collection_name
    );
 };
