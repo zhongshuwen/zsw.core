@@ -1,7 +1,7 @@
 #include <eosio/eosio.hpp>
 #include <algorithm>
 
-#include <serializer.hpp>
+#include "serializer.hpp"
 
 #pragma once
 

@@ -8,7 +8,7 @@ using namespace eosio;
 ACTION zswitems::init(name initializer) {
     require_auth(initializer);
     tbl_schemas.emplace(initializer, [&]( auto& _schema ) {
-        _schema.schema_name = "";
+        _schema.schema_name = ""_n;
         _schema.format = {};
     });
 }
@@ -372,7 +372,7 @@ void zswitems::internal_transfer(
 
 
         if (new_balance!=0) {
-            from_item_balances.modify(item_balance_itr, same_payer, [&](auto &_balance) {
+            from_item_balances.modify(item_balance_itr, same_payer, [&](auto &_item_balance) {
                 _item_balance.balance = new_balance;
             });
         } else {
@@ -467,14 +467,13 @@ void zswitems::internal_mint(
         auto to_itr = to_item_balances.find(item_id);
         if(to_itr == to_item_balances.end()){
             to_item_balances.emplace(minter, [&](auto &_item_balance) {
-                _item_balance.item_id = item_balance_itr->item_id;
-                _item_balance.status = item_status;
+                _item_balance.item_id = item_id;
+                _item_balance.status = 0;
                 _item_balance.balance = amount;
             });
         }else{
             to_item_balances.modify(to_itr, minter, [&](auto &_item_balance) {
                 _item_balance.balance = _item_balance.balance + amount;
-                _item_balance.status = _item_balance.status;
             });
         }
 
