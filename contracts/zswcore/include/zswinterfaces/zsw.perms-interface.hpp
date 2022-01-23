@@ -22,6 +22,8 @@ typedef unsigned __int128 uint128_t;
 #define ZSW_CORE_PERMS_TRANSFER_TOKEN_TO_CORE_CONTRACTS 1<<4
 #define ZSW_CORE_PERMS_RECEIVE_TOKEN_AS_CORE_CONTRACTS 1<<5
 
+#define ZSW_CORE_CONFIRM_AUTHORIZE_USER_TX 1<<6
+
 /* END CORE PERM BITS */
 
 
@@ -66,6 +68,11 @@ namespace zswcore {
                 (from_perm_bits & ZSW_CORE_PERMS_TRANSFER_TOKEN_TO_CORE_CONTRACTS)!=0
             )
         );
+    }
+    static inline void require_transfer_authorizer(name authorizer, name user){
+        require_auth(authorizer);
+
+
     }
 
 }

@@ -4,7 +4,7 @@
 Core Contracts for ZhongShuWen including: 
 
    * [zsw.perms](./contracts/zsw.perms)
-   * [zsw.item](./contracts/zsw.item)
+   * [zsw.items](./contracts/zsw.items)
 
 Dependencies:
 * [eosio.cdt v1.7.x](https://github.com/EOSIO/eosio.cdt/releases/tag/v1.7.0)

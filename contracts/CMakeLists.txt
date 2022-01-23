@@ -6,4 +6,4 @@ set(EOSIO_WASM_OLD_BEHAVIOR "Off")
 find_package(eosio.cdt)
 
 add_subdirectory(zsw.perms)
-#add_subdirectory(zsw.item)
+add_subdirectory(zsw.items)
