@@ -40,7 +40,7 @@ ACTION zswitems::mint(
 
     require_auth(minter);
     check(
-        zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, minter) & ZSW_ITEMS_PERMS_AUTHORIZE_MINT_ITEM!=0,
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, minter) & ZSW_ITEMS_PERMS_AUTHORIZE_MINT_ITEM)!=0,
         "authorizer is not allowed to create new schemas"
     );
     internal_mint(
