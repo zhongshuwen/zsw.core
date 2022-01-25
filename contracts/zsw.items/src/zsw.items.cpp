@@ -7,6 +7,8 @@ using namespace eosio;
 
 ACTION zswitems::init(name initializer) {
     require_auth(initializer);
+    auto itr = tbl_schemas.find(""_n.value);
+    check(itr != tbl_schemas.end(), "zswitems already initialized!");
     tbl_schemas.emplace(initializer, [&]( auto& _schema ) {
         _schema.schema_name = ""_n;
         _schema.format = {};
@@ -404,7 +406,7 @@ void zswitems::internal_mint(
     string memo,
     name scope_payer
 ) {
-    check(is_account(to), "to account does not exist");
+    check(is_account(to), "ZSW: to account does not exist");
 
 
     check(item_ids.size() != 0, "item_ids needs to contain at least one id");
