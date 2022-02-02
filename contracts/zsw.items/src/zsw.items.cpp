@@ -179,7 +179,7 @@ ACTION zswitems::mkcollection(
     check(schema_name.value==name("").value, "schemas/metadata not yet supported!");
 
 
-    tbl_collections.emplace(creator, [&]( auto& _collection ) {
+    tbl_collections.emplace(authorizer, [&]( auto& _collection ) {
         _collection.collection_id = collection_id;
         _collection.creator = creator;
         _collection.issuing_platform = issuing_platform;
