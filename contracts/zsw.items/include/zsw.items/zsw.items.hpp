@@ -148,7 +148,7 @@ private:
       indexed_by<name("byzswid"), eosio::const_mem_fun<s_issuerstatus, uint128_t, &s_issuerstatus::by_zsw_id> >
     > t_issuerstatus;
 
-    TABLE s_royaltyusers {
+    TABLE sroyaltyusers {
         name user_name;
         uint128_t zsw_id;
         uint128_t alt_id;
@@ -161,8 +161,8 @@ private:
         uint64_t primary_key() const { return user_name.value; }
         uint128_t by_zsw_id() const { return zsw_id; }
     };
-    typedef multi_index <name("issuerstatus"), s_royaltyusers,
-      indexed_by<name("byzswid"), eosio::const_mem_fun<s_royaltyusers, uint128_t, &s_royaltyusers::by_zsw_id> >
+    typedef multi_index <name("issuerstatus"), sroyaltyusers,
+      indexed_by<name("byzswid"), eosio::const_mem_fun<sroyaltyusers, uint128_t, &sroyaltyusers::by_zsw_id> >
     > t_royaltyusers;
 
 
