@@ -93,7 +93,7 @@ ACTION zswitems::mkissuer(
     uint128_t permissions,
     uint32_t status
 ) {
-    require_auth(issuer_name);
+    //require_auth(issuer_name);
 
     require_auth(authorizer);
     check(
@@ -105,7 +105,7 @@ ACTION zswitems::mkissuer(
     auto itr = tbl_issuerstatus.find(issuer_name.value);
     check(itr == tbl_issuerstatus.end(), "this issuer user already exists!");
 
-    tbl_issuerstatus.emplace(issuer_name, [&]( auto& _issuer_status ) {
+    tbl_issuerstatus.emplace(authorizer, [&]( auto& _issuer_status ) {
         _issuer_status.issuer_name = issuer_name;
         _issuer_status.zsw_id = zsw_id;
         _issuer_status.alt_id = alt_id;
@@ -122,7 +122,7 @@ ACTION zswitems::mkroyaltyusr(
     uint128_t alt_id,
     uint32_t status
 ) {
-    require_auth(newroyaltyusr);
+    //require_auth(newroyaltyusr);
     require_auth(authorizer);
     check(
         (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_ROYALTY_USER)!=0,
@@ -133,7 +133,7 @@ ACTION zswitems::mkroyaltyusr(
     auto itr = tbl_royaltyusers.find(newroyaltyusr.value);
     check(itr == tbl_royaltyusers.end(), "this royalty user already exists!");
 
-    tbl_royaltyusers.emplace(newroyaltyusr, [&]( auto& _royalty_user ) {
+    tbl_royaltyusers.emplace(authorizer, [&]( auto& _royalty_user ) {
         _royalty_user.user_name = newroyaltyusr;
         _royalty_user.zsw_id = zsw_id;
         _royalty_user.alt_id = alt_id;
@@ -164,8 +164,8 @@ ACTION zswitems::mkcollection(
     vector <name> authorized_accounts,
     ATTRIBUTE_MAP metadata
 ) {
-    require_auth(creator);
-    require_auth(issuing_platform);
+    //require_auth(creator);
+    //require_auth(issuing_platform);
 
     require_auth(authorizer);
     check(
@@ -213,7 +213,7 @@ ACTION zswitems::mkitem(
     ATTRIBUTE_MAP metadata
 ) {
 
-    require_auth(creator);
+    //require_auth(creator);
     require_auth(authorizer);
     require_auth(ram_payer);
     check(
