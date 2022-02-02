@@ -8,7 +8,7 @@ using namespace eosio;
 ACTION zswitems::init(name initializer) {
     require_auth(initializer);
     auto itr = tbl_schemas.find(""_n.value);
-    check(itr != tbl_schemas.end(), "zswitems already initialized!");
+    check(itr == tbl_schemas.end(), "zswitems already initialized!");
     tbl_schemas.emplace(initializer, [&]( auto& _schema ) {
         _schema.schema_name = ""_n;
         _schema.format = {};
