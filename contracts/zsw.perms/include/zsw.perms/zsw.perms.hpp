@@ -20,11 +20,12 @@ class [[eosio::contract("zsw.perms")]] zswperms : public contract {
        * Postconditions:
        * - Permissions are set and ram is paid for by scope
        * 
+       * @param sender - the user execution this action
        * @param scope - the scope of the permissions to be set
        * @param user - the user for which these permissions will apply
        * @param perm_bits - a 128 bit vector which determines the user's permissions for the given scope
        */
-      ACTION setperms(eosio::name scope, eosio::name user, uint128_t perm_bits);
+      ACTION setperms(eosio::name sender, eosio::name scope, eosio::name user, uint128_t perm_bits);
 
 
    private:

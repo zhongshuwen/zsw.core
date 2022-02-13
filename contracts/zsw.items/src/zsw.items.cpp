@@ -43,7 +43,7 @@ ACTION zswitems::mint(
     require_auth(minter);
     check(
         (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, minter) & ZSW_ITEMS_PERMS_AUTHORIZE_MINT_ITEM)!=0,
-        "authorizer is not allowed to create new schemas"
+        "authorizer is not allowed to mint items"
     );
     internal_mint(
         minter,
@@ -164,8 +164,8 @@ ACTION zswitems::mkcollection(
     vector <name> authorized_accounts,
     ATTRIBUTE_MAP metadata
 ) {
-    //require_auth(creator);
-    //require_auth(issuing_platform);
+    require_auth(creator);
+    require_auth(issuing_platform);
 
     require_auth(authorizer);
     check(
@@ -179,7 +179,7 @@ ACTION zswitems::mkcollection(
     check(schema_name.value==name("").value, "schemas/metadata not yet supported!");
 
 
-    tbl_collections.emplace(authorizer, [&]( auto& _collection ) {
+    tbl_collections.emplace(creator, [&]( auto& _collection ) {
         _collection.collection_id = collection_id;
         _collection.creator = creator;
         _collection.issuing_platform = issuing_platform;
@@ -213,7 +213,7 @@ ACTION zswitems::mkitem(
     ATTRIBUTE_MAP metadata
 ) {
 
-    //require_auth(creator);
+    require_auth(creator);
     require_auth(authorizer);
     require_auth(ram_payer);
     check(

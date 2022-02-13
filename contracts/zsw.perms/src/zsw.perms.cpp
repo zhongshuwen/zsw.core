@@ -2,11 +2,12 @@
 #include <zsw.perms/zsw.perms.hpp>
 #include <zswinterfaces/zsw.perms-interface.hpp>
 
-ACTION zswperms::setperms(eosio::name scope, eosio::name user, uint128_t perm_bits) {
+ACTION zswperms::setperms(eosio::name sender, eosio::name scope, eosio::name user, uint128_t perm_bits) {
+    require_auth(sender);
     eosio::check(has_auth(scope) || has_auth("zsw.init"_n) || (
         (scope.value == ZSW_PERMS_CORE_SCOPE.value && zswcore::get_zsw_perm_bits(
             ZSW_PERMS_CORE_SCOPE,
-            user
+            sender
 
         )&ZSW_CORE_PERMS_ADMIN)!=0
     ), "You can only call setperms on a scope that belongs to you.");
