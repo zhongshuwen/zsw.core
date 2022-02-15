@@ -278,7 +278,7 @@ ACTION zswitems::logtransfer(
 ) {
     require_auth(get_self());
 
-    notify_collection_accounts(collection_id);
+    //notify_collection_accounts(collection_id);
 }
 ACTION zswitems::logmint(
     name minter,
@@ -292,7 +292,7 @@ ACTION zswitems::logmint(
 
     require_recipient(to);
 
-    notify_collection_accounts(collection_id);
+    //notify_collection_accounts(collection_id);
 }
 
 
