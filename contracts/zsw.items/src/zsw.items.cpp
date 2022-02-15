@@ -67,7 +67,7 @@ ACTION zswitems::setuserperms(
         "authorizer is not allowed to set user permissions"
     );
     zswperms::addperms_action addperms("zsw.perms"_n, {get_self(), "active"_n});
-        addperms.send("zsw.perms"_n,"zsw.perms"_n,
+        addperms.send("zsw.items"_n,"zsw.items"_n,
         user,
         permissions
     );
@@ -132,7 +132,7 @@ ACTION zswitems::mkissuer(
         _issuer_status.status = status;
     });
     zswperms::addperms_action addperms("zsw.perms"_n, {get_self(), "active"_n});
-        addperms.send("zsw.perms"_n,"zsw.perms"_n,issuer_name,
+        addperms.send("zsw.items"_n,"zsw.items"_n,issuer_name,
         ZSW_ITEMS_PERMS_AUTHORIZE_MINT_ITEM
     );
 
