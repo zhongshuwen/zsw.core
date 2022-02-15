@@ -2,6 +2,7 @@
 #include <zsw.items/zsw.items.hpp>
 #include <zswinterfaces/zsw.perms-interface.hpp>
 #include <zswinterfaces/zsw.items-interface.hpp>
+#include <zsw.perms/zsw.perms.hpp>
 #include <zswcoredata/checkformat.hpp>
 using namespace eosio;
 
@@ -53,6 +54,24 @@ ACTION zswitems::mint(
         memo,
         minter
     );
+}
+
+ACTION zswitems::setuserperms(
+         name sender,
+         name user,
+         uint128_t permissions
+) {
+    require_auth(sender);
+    check(
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, sender) & ZSW_ITEMS_PERMS_ADMIN)!=0,
+        "authorizer is not allowed to set user permissions"
+    );
+    zswperms::addperms_action addperms("zsw.perms"_n, {get_self(), "active"_n});
+        addperms.send("zsw.perms"_n,"zsw.perms"_n,
+        user,
+        permissions
+    );
+
 }
 ACTION zswitems::mkschema(
     name authorizer,
@@ -112,6 +131,10 @@ ACTION zswitems::mkissuer(
         _issuer_status.permissions = permissions;
         _issuer_status.status = status;
     });
+    zswperms::addperms_action addperms("zsw.perms"_n, {get_self(), "active"_n});
+        addperms.send("zsw.perms"_n,"zsw.perms"_n,issuer_name,
+        ZSW_ITEMS_PERMS_AUTHORIZE_MINT_ITEM
+    );
 
 
 }

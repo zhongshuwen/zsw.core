@@ -3,7 +3,8 @@ add_contract(zsw.items zsw.items ${CMAKE_CURRENT_SOURCE_DIR}/src/zsw.items.cpp)
 target_include_directories(zsw.items
    PUBLIC
    ${CMAKE_CURRENT_SOURCE_DIR}/include
-   ${CMAKE_CURRENT_SOURCE_DIR}/../zswcore/include)
+   ${CMAKE_CURRENT_SOURCE_DIR}/../zswcore/include
+   ${CMAKE_CURRENT_SOURCE_DIR}/../zsw.perms/include)
 
 set_target_properties(zsw.items
    PROPERTIES

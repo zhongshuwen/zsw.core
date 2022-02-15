@@ -80,6 +80,11 @@ class [[eosio::contract("zsw.items")]] zswitems : public contract {
          name schema_name,
          vector <FORMAT> schema_format
       );
+      ACTION setuserperms(
+         name sender,
+         name user,
+         uint128_t permissions
+      );
       ACTION mint(
          name minter,
          name to,
