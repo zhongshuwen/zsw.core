@@ -382,13 +382,13 @@ void zswitems::internal_transfer(
         auto to_itr = to_item_balances.find(item_id);
 
         if(to_itr == to_item_balances.end()){
-            to_item_balances.emplace(item_itr->ram_payer, [&](auto &_item_balance) {
+            to_item_balances.emplace(authorizer, [&](auto &_item_balance) {
                 _item_balance.item_id = item_id;
                 _item_balance.status = item_status | ITEM_BALANCE_STATUS_SECOND_HAND;
                 _item_balance.balance = amount;
             });
         }else{
-            to_item_balances.modify(to_itr, item_itr->ram_payer, [&](auto &_item_balance) {
+            to_item_balances.modify(to_itr, authorizer, [&](auto &_item_balance) {
                 _item_balance.balance = _item_balance.balance + amount;
                 _item_balance.status = _item_balance.status | ITEM_BALANCE_STATUS_SECOND_HAND;
             });
