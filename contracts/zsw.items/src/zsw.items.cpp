@@ -269,7 +269,7 @@ ACTION zswitems::mkitem(
 
 ACTION zswitems::logtransfer(
     name authorizer,
-    name collection_name,
+    uint64_t collection_name,
     name from,
     name to,
     vector <uint64_t> item_ids,
@@ -278,11 +278,11 @@ ACTION zswitems::logtransfer(
 ) {
     require_auth(get_self());
 
-    notify_collection_accounts(collection_name);
+    notify_collection_accounts(collection_id);
 }
 ACTION zswitems::logmint(
     name minter,
-    name collection_name,
+    uint64_t collection_id,
     name to,
     vector <uint64_t> item_ids,
     vector <uint64_t> amounts,
@@ -292,7 +292,7 @@ ACTION zswitems::logmint(
 
     require_recipient(to);
 
-    notify_collection_accounts(collection_name);
+    notify_collection_accounts(collection_id);
 }
 
 
@@ -526,9 +526,9 @@ void zswitems::internal_mint(
 * Notifies all of a collection's notify accounts using require_recipient
 */
 void zswitems::notify_collection_accounts(
-    name collection_name
+    uint64_t collection_id
 ) {
-    auto collection_itr = tbl_collections.require_find(collection_name.value,
+    auto collection_itr = tbl_collections.require_find(collection_id,
         "No collection with this name exists");
 
     for (const name &notify_account : collection_itr->notify_accounts) {

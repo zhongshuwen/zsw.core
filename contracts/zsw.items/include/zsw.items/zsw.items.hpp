@@ -115,7 +115,7 @@ class [[eosio::contract("zsw.items")]] zswitems : public contract {
 
       ACTION logtransfer(
          name authorizer,
-         name collection_name,
+         uint64_t collection_id,
          name from,
          name to,
          std::vector <uint64_t> item_ids,
@@ -124,7 +124,7 @@ class [[eosio::contract("zsw.items")]] zswitems : public contract {
       );
       ACTION logmint(
          name minter,
-         name collection_name,
+         uint64_t collection_id,
          name to,
          vector <uint64_t> item_ids,
          vector <uint64_t> amounts,
@@ -244,6 +244,6 @@ private:
       name scope_payer
    );
    void notify_collection_accounts(
-      name collection_name
+      uint64_t collection_id
    );
 };
