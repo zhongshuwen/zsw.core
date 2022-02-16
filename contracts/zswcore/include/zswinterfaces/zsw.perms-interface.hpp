@@ -85,7 +85,7 @@ namespace zswcore {
     }
     static inline void require_transfer_authorizer(name authorizer, name user){
         require_auth(authorizer);
-        auto perm_bits = (get_zsw_perm_bits(ZSW_PERMS_CORE_SCOPE, authorizer);
+        uint128_t perm_bits = (get_zsw_perm_bits(ZSW_PERMS_CORE_SCOPE, authorizer);
 
         check(
             (perm_bits&ZSW_CORE_PERMS_CONFIRM_AUTHORIZE_USER_TX)!=0 &&
