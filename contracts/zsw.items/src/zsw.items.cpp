@@ -195,7 +195,8 @@ ACTION zswitems::mkcollection(
         (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_COLLECTION)!=0,
         "authorizer is not allowed to create collections"
     );
-
+    auto royaltyItr = tbl_royaltyusers.require_find(royalty_fee_collector.value,"royalty fee collector not yet approved");
+    
     auto itr = tbl_collections.find(collection_id);
     check(itr == tbl_collections.end(), "this collection id already exists!");
 
@@ -278,7 +279,7 @@ ACTION zswitems::logtransfer(
 ) {
     require_auth(get_self());
 
-    //notify_collection_accounts(collection_id);
+    notify_collection_accounts(collection_id);
 }
 ACTION zswitems::logmint(
     name minter,
@@ -292,7 +293,7 @@ ACTION zswitems::logmint(
 
     require_recipient(to);
 
-    //notify_collection_accounts(collection_id);
+    notify_collection_accounts(collection_id);
 }
 
 
@@ -411,17 +412,6 @@ void zswitems::internal_transfer(
         index++;
     }
 
-
-/*
-
-    name authorizer,
-    uint64_t collection_id,
-    name from,
-    name to,
-    vector <uint64_t> item_ids,
-    vector <uint64_t> amounts,
-    string memo
-    */
     //Sending notifications
     for (const auto&[collection, item_ids_transferred] : collection_to_item_ids_transferred) {
         action(
