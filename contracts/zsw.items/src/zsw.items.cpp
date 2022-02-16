@@ -269,7 +269,7 @@ ACTION zswitems::mkitem(
 
 ACTION zswitems::logtransfer(
     name authorizer,
-    uint64_t collection_name,
+    uint64_t collection_id,
     name from,
     name to,
     vector <uint64_t> item_ids,
@@ -411,13 +411,24 @@ void zswitems::internal_transfer(
         index++;
     }
 
+
+/*
+
+    name authorizer,
+    uint64_t collection_id,
+    name from,
+    name to,
+    vector <uint64_t> item_ids,
+    vector <uint64_t> amounts,
+    string memo
+    */
     //Sending notifications
     for (const auto&[collection, item_ids_transferred] : collection_to_item_ids_transferred) {
         action(
             permission_level{get_self(), name("active")},
             get_self(),
             name("logtransfer"),
-            make_tuple(collection, from, to, item_ids_transferred, collection_to_item_amounts_transferred[collection], memo)
+            make_tuple(authorizer, collection, from, to, item_ids_transferred, collection_to_item_amounts_transferred[collection], memo)
         ).send();
     }
 }
