@@ -1005,7 +1005,7 @@ uint64_t zswitems::unfreeze_up_to_amount(
 ) {
     check(amount>0,"cannot unfreeze amount 0");
     uint32_t cur_time_sec = eosio::current_time_point().sec_since_epoch();
-    auto frozen_cus_idx = from_custody_balances.get_index<name("bycustodian")>();
+    auto frozen_cus_idx = from_custody_balances.get_index<name("byitemid")>();
     uint128_t lower_bound = CREATE_FROZEN_ID_BY_CUSTODIAN(custodian_id, item_id, 0);
     
     auto frozen_itr = frozen_cus_idx.lower_bound(lower_bound);
