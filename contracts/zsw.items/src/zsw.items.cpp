@@ -1072,7 +1072,7 @@ uint32_t zswitems::require_get_custodian_id_with_permissions(name account, uint1
         // null can do all so no need to check permissions
         return NULL_CUSTODIAN_ID;
     }
-    auto itr = tbl_custodians.require_find(account.value, "this user is not a custodian!");
+    auto itr = tbl_custodians.get_index<name("byname")>().require_find(account.value, "this user is not a custodian!");
 
 
     check(((itr->permissions) & permissions) == (permissions | CUSTODIAN_PERMS_ENABLED), "this user is missing the required custodian permissions for this action!");
