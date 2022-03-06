@@ -535,7 +535,7 @@ void zswitems::internal_transfer(
         //This item_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_item_balances.emplace(scope_payer, [&](auto &_item_balance) {
-            _item_balance.item_id = ULLONG_MAX;
+            _item_balance.item_id = 0;
             _item_balance.status = 0;
             _item_balance.balance = 0;
             _item_balance.balance_in_custody = 0;
@@ -550,7 +550,7 @@ void zswitems::internal_transfer(
         //This custody_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_custody_balances.emplace(scope_payer, [&](auto &_custody_balance) {
-            _custody_balance.custody_balance_id = ULLONG_MAX;
+            _custody_balance.custody_balance_id = 0;
             _custody_balance.status = 0;
             _custody_balance.balance = 0;
         });
@@ -563,7 +563,7 @@ void zswitems::internal_transfer(
         //This frozen_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_frozen_balances.emplace(scope_payer, [&](auto &_frozen_balance) {
-            _frozen_balance.frozen_balance_id = ULLONG_MAX;
+            _frozen_balance.frozen_balance_id = 0;
             _frozen_balance.custodian_id = 0xffffffff;
             _frozen_balance.balance = 0;
             _frozen_balance.unfreezes_at = 0;
@@ -631,13 +631,13 @@ void zswitems::internal_transfer(
     }
 
     if (no_previous_scope_item_balances) {
-        to_item_balances.erase(to_item_balances.find(ULLONG_MAX));
+        to_item_balances.erase(to_item_balances.find(0));
     }
     if (no_previous_scope_frozen_balances) {
-        to_frozen_balances.erase(to_frozen_balances.find(ULLONG_MAX));
+        to_frozen_balances.erase(to_frozen_balances.find(0));
     }
     if (no_previous_scope_custody_balances) {
-        to_custody_balances.erase(to_custody_balances.find(ULLONG_MAX));
+        to_custody_balances.erase(to_custody_balances.find(0));
     }
 
     //Sending notifications
@@ -712,7 +712,7 @@ void zswitems::internal_mint(
         //This item_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_item_balances.emplace(scope_payer, [&](auto &_item_balance) {
-            _item_balance.item_id = ULLONG_MAX;
+            _item_balance.item_id = 0;
             _item_balance.status = 0;
             _item_balance.balance = 0;
             _item_balance.balance_in_custody = 0;
@@ -727,7 +727,7 @@ void zswitems::internal_mint(
         //This custody_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_custody_balances.emplace(scope_payer, [&](auto &_custody_balance) {
-            _custody_balance.custody_balance_id = ULLONG_MAX;
+            _custody_balance.custody_balance_id = 0;
             _custody_balance.status = 0;
             _custody_balance.balance = 0;
         });
@@ -740,7 +740,7 @@ void zswitems::internal_mint(
         //This frozen_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_frozen_balances.emplace(scope_payer, [&](auto &_frozen_balance) {
-            _frozen_balance.frozen_balance_id = ULLONG_MAX;
+            _frozen_balance.frozen_balance_id = 0;
             _frozen_balance.custodian_id = 0xffffffff;
             _frozen_balance.balance = 0;
             _frozen_balance.unfreezes_at = 0;
@@ -794,13 +794,13 @@ void zswitems::internal_mint(
     }
 
     if (no_previous_scope_item_balances) {
-        to_item_balances.erase(to_item_balances.find(ULLONG_MAX));
+        to_item_balances.erase(to_item_balances.find(0));
     }
     if (no_previous_scope_frozen_balances) {
-        to_frozen_balances.erase(to_frozen_balances.find(ULLONG_MAX));
+        to_frozen_balances.erase(to_frozen_balances.find(0));
     }
     if (no_previous_scope_custody_balances) {
-        to_custody_balances.erase(to_custody_balances.find(ULLONG_MAX));
+        to_custody_balances.erase(to_custody_balances.find(0));
     }
     //Sending notifications
     for (const auto&[collection, item_ids_minted] : collection_to_item_ids_minted) {
