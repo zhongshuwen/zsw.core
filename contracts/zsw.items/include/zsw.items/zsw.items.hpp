@@ -67,12 +67,14 @@ class [[eosio::contract("zsw.items")]] zswitems : public contract {
          uint32_t status
       );
       ACTION mkcustodian(
-         name authorizer,
+         name creator,
          name custodian_name,
          uint128_t zsw_id,
          uint128_t alt_id,
          uint128_t permissions,
-         uint32_t status
+         uint32_t status,
+         uint32_t incoming_freeze_period,
+         vector <name> notify_accounts
       );
       ACTION mkroyaltyusr(
          name authorizer,
@@ -122,6 +124,11 @@ class [[eosio::contract("zsw.items")]] zswitems : public contract {
       ACTION setuserperms(
          name sender,
          name user,
+         uint128_t permissions
+      );
+      ACTION setcustperms(
+         name sender,
+         name custodian,
          uint128_t permissions
       );
       ACTION mint(

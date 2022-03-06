@@ -139,6 +139,24 @@ ACTION zswitems::setuserperms(
     );
 
 }
+ACTION zswitems::setcustperms(
+         name sender,
+         name custodian,
+         uint128_t permissions
+) {
+    require_auth(sender);
+    check(
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, sender) & ZSW_ITEMS_PERMS_ADMIN)!=0,
+        "authorizer is not allowed to set user permissions"
+    );
+    auto custodian_byname_idx = tbl_custodians.get_index<name("byname")>();
+    auto custodian_byname_itr = custodian_byname_idx.find(custodian.value);
+    check(custodian_byname_itr != custodian_byname_idx.end(), "a custodian with this name does not exist!");
+
+    custodian_byname_idx.modify(custodian_byname_itr, sender, [&](auto &_custodian) {
+        _custodian.permissions = permissions;
+    });
+}
 ACTION zswitems::mkschema(
     name authorizer,
     name creator,
@@ -278,11 +296,10 @@ ACTION zswitems::mkcollection(
         _collection.secondary_market_fee = secondary_market_fee; 
         _collection.primary_market_fee = primary_market_fee; 
         _collection.schema_name = schema_name;
-        _collection.external_metadata_url = external_metadata_url;
         _collection.royalty_fee_collector = royalty_fee_collector;
         _collection.notify_accounts = notify_accounts;
-        _collection.authorized_accounts = authorized_accounts;
         _collection.serialized_metadata = {};
+        _collection.external_metadata_url = external_metadata_url;
     });
 }
 
@@ -332,6 +349,45 @@ ACTION zswitems::mkitem(
         _item.schema_name = schema_name;
         _item.serialized_metadata = {};
         _item.external_metadata_url = external_metadata_url;
+    });
+
+}
+
+ACTION zswitems::mkcustodian(
+    name creator,
+    name custodian_name,
+    uint128_t zsw_id,
+    uint128_t alt_id,
+    uint128_t permissions,
+    uint32_t status,
+    uint32_t incoming_freeze_period,
+    vector <name> notify_accounts
+) {
+
+    require_auth(creator);
+     
+    check(
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, creator) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_CUSTODIAN)!=0,
+        "creator is not allowed to create new custodians"
+    );
+    auto custodian_byname_idx = tbl_custodians.get_index<name("byname")>();
+    auto custodian_byname_itr = custodian_byname_idx.find(custodian_name.value);
+    check(custodian_byname_itr == custodian_byname_idx.end(), "a custodian with this name already exists!");
+    
+    auto custodian_zswid_idx = tbl_custodians.get_index<name("byzswid")>();
+    auto custodian_zswid_itr = custodian_zswid_idx.find(zsw_id);
+    check(custodian_zswid_itr == custodian_zswid_idx.end(), "a custodian with this zsw_id already exists!");
+
+
+    tbl_custodians.emplace(creator, [&]( auto& _custodian ) {
+        _custodian.custodian_id = tbl_custodians.available_primary_key();
+        _custodian.custodian_name = custodian_name;
+        _custodian.zsw_id = zsw_id;
+        _custodian.alt_id = alt_id;
+        _custodian.permissions = permissions;
+        _custodian.status = status;
+        _custodian.incoming_freeze_period = incoming_freeze_period;
+        _custodian.notify_accounts = notify_accounts;
     });
 
 }
@@ -693,6 +749,7 @@ void zswitems::internal_mint(
         check(amount>0,"cannot send 0 amount");
         check((item_id & 0xffffffffff)==item_id,"item_id cannot be larger than 2^40-1");
         auto item_itr = tbl_items.require_find(item_id,"item does not exist");
+        require_auth(item_itr->authorized_minter);
         uint32_t item_config = (item_itr->item_config);
         
         check((item_config&ITEM_CONFIG_FROZEN)==0,
