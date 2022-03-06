@@ -550,11 +550,9 @@ void zswitems::internal_transfer(
         //This custody_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_custody_balances.emplace(scope_payer, [&](auto &_custody_balance) {
-            _custody_balance.item_id = ULLONG_MAX;
+            _custody_balance.custody_balance_id = ULLONG_MAX;
             _custody_balance.status = 0;
             _custody_balance.balance = 0;
-            _custody_balance.balance_in_custody = 0;
-            _custody_balance.balance_frozen = 0;
         });
     }
 
@@ -565,11 +563,11 @@ void zswitems::internal_transfer(
         //This frozen_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_frozen_balances.emplace(scope_payer, [&](auto &_frozen_balance) {
-            _frozen_balance.item_id = ULLONG_MAX;
-            _frozen_balance.status = 0;
+            _frozen_balance.frozen_balance_id = ULLONG_MAX;
+            _frozen_balance.custodian_id = 0xffffffff;
             _frozen_balance.balance = 0;
-            _frozen_balance.balance_in_custody = 0;
-            _frozen_balance.balance_frozen = 0;
+            _frozen_balance.unfreezes_at = 0;
+            _frozen_balance.item_id = 0;
         });
     }
     // end scope helpers pt 1
@@ -1005,7 +1003,7 @@ uint64_t zswitems::unfreeze_up_to_amount(
 ) {
     check(amount>0,"cannot unfreeze amount 0");
     uint32_t cur_time_sec = eosio::current_time_point().sec_since_epoch();
-    auto frozen_cus_idx = from_custody_balances.get_index<name("byitemid")>();
+    auto frozen_cus_idx = from_frozen_balances.get_index<name("bycustodian")>();
     uint128_t lower_bound = CREATE_FROZEN_ID_BY_CUSTODIAN(custodian_id, item_id, 0);
     
     auto frozen_itr = frozen_cus_idx.lower_bound(lower_bound);
@@ -1035,12 +1033,12 @@ uint64_t zswitems::unfreeze_up_to_amount(
                 });
             }
             from_item_balances.modify(item_balances_itr, ram_payer, [&](auto &_item_balance) {
-                _item_balance.frozen_balance = _frozen_balance.frozen_balance - unfrozen_amount;
+                _item_balance.frozen_balance = _item_balance.frozen_balance - unfrozen_amount;
                 _item_balance.balance_in_custody = _item_balance.balance_in_custody + unfrozen_amount;
             });
         }else{
             from_item_balances.modify(item_balances_itr, ram_payer, [&](auto &_item_balance) {
-                _item_balance.frozen_balance = _frozen_balance.frozen_balance - unfrozen_amount;
+                _item_balance.frozen_balance = _item_balance.frozen_balance - unfrozen_amount;
             });
         }
     }
