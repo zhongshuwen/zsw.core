@@ -733,11 +733,9 @@ void zswitems::internal_mint(
         //This custody_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_custody_balances.emplace(scope_payer, [&](auto &_custody_balance) {
-            _custody_balance.item_id = ULLONG_MAX;
+            _custody_balance.custody_balance_id = ULLONG_MAX;
             _custody_balance.status = 0;
             _custody_balance.balance = 0;
-            _custody_balance.balance_in_custody = 0;
-            _custody_balance.balance_frozen = 0;
         });
     }
 
@@ -748,11 +746,11 @@ void zswitems::internal_mint(
         //This frozen_balance is later deleted again.
         //This action will therefore fail if the scope_payer didn't authorize the action
         to_frozen_balances.emplace(scope_payer, [&](auto &_frozen_balance) {
-            _frozen_balance.item_id = ULLONG_MAX;
-            _frozen_balance.status = 0;
+            _frozen_balance.frozen_balance_id = ULLONG_MAX;
+            _frozen_balance.custodian_id = 0xffffffff;
             _frozen_balance.balance = 0;
-            _frozen_balance.balance_in_custody = 0;
-            _frozen_balance.balance_frozen = 0;
+            _frozen_balance.unfreezes_at = 0;
+            _frozen_balance.item_id = 0;
         });
     }
 
@@ -1033,12 +1031,12 @@ uint64_t zswitems::unfreeze_up_to_amount(
                 });
             }
             from_item_balances.modify(item_balances_itr, ram_payer, [&](auto &_item_balance) {
-                _item_balance.frozen_balance = _item_balance.frozen_balance - unfrozen_amount;
+                _item_balance.balance_frozen = _item_balance.balance_frozen - unfrozen_amount;
                 _item_balance.balance_in_custody = _item_balance.balance_in_custody + unfrozen_amount;
             });
         }else{
             from_item_balances.modify(item_balances_itr, ram_payer, [&](auto &_item_balance) {
-                _item_balance.frozen_balance = _item_balance.frozen_balance - unfrozen_amount;
+                _item_balance.balance_frozen = _item_balance.balance_frozen - unfrozen_amount;
             });
         }
     }
