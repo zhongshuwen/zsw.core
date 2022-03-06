@@ -611,9 +611,6 @@ void zswitems::internal_transfer(
             from,
             from_custodian,
             from_custodian_id,
-            from_item_balances,
-            from_custody_balances,
-            from_frozen_balances,
             scope_payer,
             item_id,
             amount,
@@ -624,9 +621,6 @@ void zswitems::internal_transfer(
             to,
             to_custodian,
             to_custodian_id,
-            to_item_balances,
-            to_custody_balances,
-            to_frozen_balances,
             scope_payer,
             item_id,
             amount,
@@ -790,9 +784,6 @@ void zswitems::internal_mint(
             to,
             to_custodian,
             to_custodian_id,
-            to_item_balances,
-            to_custody_balances,
-            to_frozen_balances,
             scope_payer,
             item_id,
             amount,
@@ -825,15 +816,15 @@ void zswitems::add_to_user_balance(
     name user,
     name custodian,
     uint32_t custodian_id,
-    t_item_balances to_item_balances,
-    t_custody_balances to_custody_balances,
-    t_frozen_balances to_frozen_balances,
     name ram_payer,
     uint64_t item_id,
     uint64_t amount,
     uint32_t unfreezes_at
 ){
     check(amount>0,"cannot add 0 amount");
+    t_item_balances to_item_balances = get_tbl_item_balances(user);
+    t_custody_balances to_custody_balances = get_tbl_custody_balances(user);
+    t_frozen_balances to_frozen_balances = get_tbl_frozen_balances(user);
     
     auto to_itr = to_item_balances.find(item_id);
     uint64_t balance_in_custody_to_add = 0;//(custodian.value == NULL_CUSTODIAN_NAME.value)?0:amount;
@@ -903,9 +894,6 @@ void zswitems::sub_from_user_balance(
     name user,
     name custodian,
     uint32_t custodian_id,
-    t_item_balances from_item_balances,
-    t_custody_balances from_custody_balances,
-    t_frozen_balances from_frozen_balances,
     name ram_payer,
     uint64_t item_id,
     uint64_t amount,
@@ -914,12 +902,13 @@ void zswitems::sub_from_user_balance(
     
 ){
     check(amount>0,"cannot add 0 amount");
+    
+    t_item_balances from_item_balances = get_tbl_item_balances(user);
+    t_custody_balances from_custody_balances = get_tbl_custody_balances(user);
+    t_frozen_balances from_frozen_balances = get_tbl_frozen_balances(user);
     uint32_t unfroze_total = unfreeze_up_to_amount(
         user,
         custodian_id,
-        from_item_balances,
-        from_custody_balances,
-        from_frozen_balances,
         ram_payer,
         item_id,
         amount,
@@ -929,9 +918,6 @@ void zswitems::sub_from_user_balance(
         unfroze_total += unfreeze_up_to_amount(
             user,
             NULL_CUSTODIAN_ID,
-            from_item_balances,
-            from_custody_balances,
-            from_frozen_balances,
             ram_payer,
             item_id,
             amount ,
@@ -991,15 +977,15 @@ void zswitems::sub_from_user_balance(
 uint64_t zswitems::unfreeze_up_to_amount(
     name user,
     uint32_t custodian_id,
-    t_item_balances from_item_balances,
-    t_custody_balances from_custody_balances,
-    t_frozen_balances from_frozen_balances,
     name ram_payer,
     uint64_t item_id,
     uint64_t amount,
     uint32_t max_iterations
 ) {
     check(amount>0,"cannot unfreeze amount 0");
+    t_item_balances from_item_balances = get_tbl_item_balances(user);
+    t_custody_balances from_custody_balances = get_tbl_custody_balances(user);
+    t_frozen_balances from_frozen_balances = get_tbl_frozen_balances(user);
     uint32_t cur_time_sec = eosio::current_time_point().sec_since_epoch();
     auto frozen_cus_idx = from_frozen_balances.get_index<name("bycustodian")>();
     uint128_t lower_bound = CREATE_FROZEN_ID_BY_CUSTODIAN(custodian_id, item_id, 0);
