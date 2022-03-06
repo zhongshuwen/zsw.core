@@ -208,6 +208,11 @@ ACTION zswitems::mkissuer(
     auto itr = tbl_issuerstatus.find(issuer_name.value);
     check(itr == tbl_issuerstatus.end(), "this issuer user already exists!");
 
+    auto issuerstatus_zswid_idx = tbl_issuerstatus.get_index<name("byzswid")>();
+    auto issuerstatus_zswid_itr = issuerstatus_zswid_idx.find(zsw_id);
+    check(issuerstatus_zswid_itr == issuerstatus_zswid_idx.end(), "a issuerstatus with this zsw_id already exists!");
+
+
     tbl_issuerstatus.emplace(authorizer, [&]( auto& _issuer_status ) {
         _issuer_status.issuer_name = issuer_name;
         _issuer_status.zsw_id = zsw_id;
@@ -239,6 +244,11 @@ ACTION zswitems::mkroyaltyusr(
 
     auto itr = tbl_royaltyusers.find(newroyaltyusr.value);
     check(itr == tbl_royaltyusers.end(), "this royalty user already exists!");
+
+    auto royaltyuser_zswid_idx = tbl_royaltyusers.get_index<name("byzswid")>();
+    auto royaltyuser_zswid_itr = royaltyuser_zswid_idx.find(zsw_id);
+    check(royaltyuser_zswid_itr == royaltyuser_zswid_idx.end(), "a royalty user with this zsw_id already exists!");
+
 
     tbl_royaltyusers.emplace(authorizer, [&]( auto& _royalty_user ) {
         _royalty_user.user_name = newroyaltyusr;
@@ -274,10 +284,16 @@ ACTION zswitems::mkcollection(
     require_auth(issuing_platform);
 
     require_auth(authorizer);
+    
+    
     check(
         (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_COLLECTION)!=0,
         "authorizer is not allowed to create collections"
     );
+
+
+
+
     auto royaltyItr = tbl_royaltyusers.require_find(royalty_fee_collector.value,"royalty fee collector not yet approved");
     
     auto itr = tbl_collections.find(collection_id);
@@ -336,6 +352,7 @@ ACTION zswitems::mkitem(
 
     auto itr = tbl_items.find(item_id);
     check(itr == tbl_items.end(), "this item already exists!");
+
 
     tbl_items.emplace(creator, [&]( auto& _item ) {
         _item.item_id = item_id;
