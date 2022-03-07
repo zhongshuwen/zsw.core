@@ -338,7 +338,9 @@ ACTION zswitems::mkitem(
     require_auth(creator);
     require_auth(authorizer);
     check((item_id & 0xffffffffff)==item_id,"item_id cannot be larger than 2^40-1");
-    check(((uint64_t)(zsw_id&0xffffffffff)) == item_id, "item id must be the first 40 bits of the zsw_id!");
+    check(((uint64_t)(zsw_id&0xffffffffff)) == item_id, 
+        ("item id must be the first 40 bits of the zsw_id!e (expecting: " + to_string(((uint64_t)(zsw_id&0xffffffffff)))+", got "+to_string(item_id) + ")").c_str()
+    );
 
     check(
         (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorizer) & ZSW_ITEMS_PERMS_AUTHORIZE_CREATE_ITEM)!=0,
