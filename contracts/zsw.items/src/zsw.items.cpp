@@ -966,15 +966,10 @@ void zswitems::sub_from_user_balance(
         amount_to_remove == 0 || (can_use_liquid_and_custodian && cur_pure_liquid_balance>=amount_to_remove && cur_balance >= amount_to_remove),
         "sender insufficient item balance"
     );
-    if(amount_to_remove>0){
-        cur_balance -= amount_to_remove;
-        cur_pure_liquid_balance -= amount_to_remove;
-
-
-    }
+    cur_balance -= amount_to_remove;
     if(cur_balance == 0){
         from_item_balances.erase(from_itr);
-    }else{
+    }else if(amount_to_remove!=0){
         from_item_balances.modify(from_itr, ram_payer, [&](auto &_item_balance) {
             _item_balance.balance = _item_balance.balance - amount_to_remove;
         });
