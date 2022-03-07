@@ -943,10 +943,11 @@ void zswitems::sub_from_user_balance(
                 from_custody_balances.modify(custody_balance_itr, ram_payer, [&](auto &_custody_balance) {
                     _custody_balance.balance = _custody_balance.balance - amount;
                 });
+                amount_to_remove = 0;
             }else{
+                amount_to_remove -= cust_bal;
                 from_custody_balances.erase(custody_balance_itr);
             }
-            amount_to_remove -= cust_bal;
             from_item_balances.modify(from_itr, ram_payer, [&](auto &_item_balance) {
                 _item_balance.balance_in_custody = _item_balance.balance_in_custody - cust_bal;
                 _item_balance.balance = _item_balance.balance - cust_bal;
