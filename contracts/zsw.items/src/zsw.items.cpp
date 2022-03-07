@@ -959,14 +959,19 @@ void zswitems::sub_from_user_balance(
     cur_balance = from_itr->balance;
     uint64_t cur_balance_frozen = from_itr->balance_frozen;
     uint64_t cur_balance_in_custody = from_itr->balance_in_custody;
+    check(cur_balance >= (cur_balance_frozen+cur_balance_in_custody),"overflow in frozen/custody");
     uint64_t cur_pure_liquid_balance =cur_balance-(cur_balance_frozen+cur_balance_in_custody);
 
     check(
-        amount_to_remove == 0 || (can_use_liquid_and_custodian && cur_pure_liquid_balance>=amount_to_remove),
+        amount_to_remove == 0 || (can_use_liquid_and_custodian && cur_pure_liquid_balance>=amount_to_remove && cur_balance >= amount_to_remove),
         "sender insufficient item balance"
     );
-    cur_balance -= amount_to_remove;
-    cur_pure_liquid_balance -= amount_to_remove;
+    if(amount_to_remove>0){
+        cur_balance -= amount_to_remove;
+        cur_pure_liquid_balance -= amount_to_remove;
+
+
+    }
     if(cur_balance == 0){
         from_item_balances.erase(from_itr);
     }else{
