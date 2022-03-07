@@ -951,9 +951,10 @@ void zswitems::sub_from_user_balance(
                 _item_balance.balance_in_custody = _item_balance.balance_in_custody - cust_bal;
                 _item_balance.balance = _item_balance.balance - cust_bal;
             });
-            from_itr = from_item_balances.require_find(item_id, "sender does not have this item!");
+            
         }
     }
+    from_itr = from_item_balances.require_find(item_id, "sender does not have this item!");
     cur_balance = from_itr->balance;
     uint64_t cur_balance_frozen = from_itr->balance_frozen;
     uint64_t cur_balance_in_custody = from_itr->balance_in_custody;
@@ -994,7 +995,7 @@ uint64_t zswitems::unfreeze_up_to_amount(
     uint32_t unfrozen_amount = 0;
     while(max_iterations>0&&frozen_itr != frozen_cus_idx.end() && unfrozen_amount<amount && (frozen_itr->unfreezes_at) <= cur_time_sec){
         unfrozen_amount += frozen_itr->balance;
-        frozen_cus_idx.erase(frozen_itr);
+        frozen_itr = frozen_cus_idx.erase(frozen_itr);
         max_iterations--;
     }
     if(unfrozen_amount != 0){
