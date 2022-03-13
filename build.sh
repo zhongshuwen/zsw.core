@@ -14,6 +14,7 @@ function usage() {
 
 BUILD_TESTS=false
 
+CDT_DIR_PROMPT="/usr/local/opt/eosio.cdt"
 if [ $# -ne 0 ]; then
   while getopts "e:c:tyh" opt; do
     case "${opt}" in
@@ -56,7 +57,6 @@ if [[ ${BUILD_TESTS} == true ]]; then
    # Prompt user for location of eosio.
    eosio-directory-prompt
 fi
-
 # Prompt user for location of eosio.cdt.
 cdt-directory-prompt
 
