@@ -609,6 +609,70 @@ ACTION zswitems::mkitem(
     ).send();
 }
 
+
+ACTION zswitems::setitemdata(
+       name authorized_editor,
+       uint64_t item_id,
+       ATTRIBUTE_MAP new_mutable_data
+){
+    require_auth(authorized_editor);
+    eosio::check(
+        (zswcore::get_zsw_perm_bits(ZSW_ITEMS_PERMS_SCOPE, authorized_editor) & ZSW_ITEMS_PERMS_AUTHORIZE_MODIFY_ITEM_METADATA)!=0,
+        "authorized_editor is not allowed to modify metadata"
+    );
+    auto item_itr = tbl_items.require_find(item_id,"item does not exist");
+    auto collection_itr = tbl_collections.require_find(item_itr->collection_id, "collection does not exist");
+    check(
+        (((collection_itr->item_config) & ITEM_CONFIG_ALLOW_MUTABLE_DATA ) != 0),
+        "collection does not have mutable data enabled!"
+    );
+    check(
+        (((item_itr->item_config) & ITEM_CONFIG_ALLOW_MUTABLE_DATA ) != 0),
+        "item does not have mutable data enabled!"
+    );
+    auto authorized_mutable_data_editors = collection_itr->authorized_mutable_data_editors;
+    check(
+        std::find(authorized_mutable_data_editors.begin(), authorized_mutable_data_editors.end(), authorized_editor) != authorized_mutable_data_editors.end(),
+        "user is not an authorized mutable data editor for this collection!"
+    );
+    check((item_itr->schema_name ).value!= name("").value,"schema cannot be empty for editing mutable data");
+
+    auto schema_itr = tbl_schemas.require_find((item_itr->schema_name).value,"schema does not exist");
+
+    ATTRIBUTE_MAP deserialized_old_data = deserialize(
+        item_itr->serialized_mutable_metadata,
+        schema_itr->format
+    );
+
+    action(
+        permission_level{get_self(), name("active")},
+        get_self(),
+        name("logsetdata"),
+        make_tuple(authorized_editor, item_id, item_itr->collection_id, deserialized_old_data, new_mutable_data)
+    ).send();
+
+
+    tbl_items.modify(item_itr, authorized_editor, [&](auto &_item) {
+        _item.serialized_mutable_metadata = serialize(new_mutable_data, schema_itr->format);
+    });
+
+    
+
+
+}
+
+ACTION zswitems::logsetdata(
+       name authorized_editor,
+       uint64_t item_id,
+       uint64_t collection_id,
+       ATTRIBUTE_MAP old_data,
+       ATTRIBUTE_MAP new_data
+) {
+    require_auth(get_self());
+
+    notify_collection_accounts(collection_id);
+}
+
 ACTION zswitems::mkcustodian(
     name creator,
     name custodian_name,
