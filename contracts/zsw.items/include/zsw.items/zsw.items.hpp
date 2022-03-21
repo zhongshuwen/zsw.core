@@ -32,8 +32,8 @@ using namespace std;
 #define ITEM_BALANCE_STATUS_SECOND_HAND (1<<0)
 #define ITEM_BALANCE_STATUS_AUTHORIZER_LOCKED (1<<1)
 #define ITEM_BALANCE_STATUS_FROZEN (1<<2)
-//change back to zsw.items later
-#define ZSW_ITEMS_PERMS_SCOPE "testtest111f"_n
+
+#define ZSW_ITEMS_PERMS_SCOPE "zsw.items"_n
 
 #define MAX_PROFIT_SHARING_FEE_PRIMARY 5000
 #define MAX_PROFIT_SHARING_FEE_SECONDARY 5000
