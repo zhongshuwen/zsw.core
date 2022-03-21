@@ -173,6 +173,7 @@ public:
        name authorized_editor,
        uint64_t item_id,
        ATTRIBUTE_MAP new_mutable_data);
+   ACTION dataintrface(ATTRIBUTE_MAP new_mutable_data);
 
    ACTION logsetdata(
        name authorized_editor,

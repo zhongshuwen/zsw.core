@@ -272,7 +272,9 @@ ACTION zswitems::mkroyaltyusr(
 
 
 }
-
+ACTION zswitems::dataintrface(ATTRIBUTE_MAP new_mutable_data){
+    
+}
 ACTION zswitems::mkcollection(
     name authorizer,
     uint128_t zsw_id,
