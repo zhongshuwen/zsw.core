@@ -355,7 +355,7 @@ private:
         vector <uint8_t> serialized_immutable_metadata;//8? = 72
 
         std::string item_external_metadata_url_template;//8? = 80
-        uint64_t primary_key() const { return zsw_id&0xffffffffff; };//8? = 96
+        uint64_t primary_key() const { return zsw_id&0xffffffffffffffff; };//8? = 96
     };
     typedef multi_index <name("itemtemplate"), s_item_templates> t_item_templates;
 
