@@ -273,7 +273,7 @@ ACTION zswitems::mkroyaltyusr(
 
 }
 ACTION zswitems::dataintrface(ATTRIBUTE_MAP new_mutable_data){
-    
+    requie_auth(name("zsw.items"));
 }
 ACTION zswitems::mkcollection(
     name authorizer,
