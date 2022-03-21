@@ -272,8 +272,8 @@ ACTION zswitems::mkroyaltyusr(
 
 
 }
-ACTION zswitems::dataintrface(ATTRIBUTE_MAP new_mutable_data){
-    require_auth(name("zsw.items"));
+ACTION zswitems::dataintrface(name authorizer, ATTRIBUTE_MAP new_mutable_data){
+    require_auth(authorizer);
 }
 ACTION zswitems::mkcollection(
     name authorizer,
