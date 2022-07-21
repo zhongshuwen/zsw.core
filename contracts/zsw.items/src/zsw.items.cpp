@@ -1043,7 +1043,8 @@ void zswitems::internal_transfer(
        require_auth(authorizer);
     check(is_account(to), "to account does not exist");
 
-    check(from != to, "Can't transfer item_balances to yourself");
+    //allow transfers to/from the same account only if it is a new custodian
+    check(from != to || from_custodian != to_custodian, "Can't transfer item_balances to yourself");
 
     check(item_ids.size() != 0, "item_ids needs to contain at least one id");
     check(item_ids.size() == amounts.size(), "item_ids should be the same size as amounts");
@@ -1179,6 +1180,12 @@ void zswitems::internal_mint(
         check(
             (minter_perms & ZSW_ITEMS_PERMS_AUTHORIZE_MINT_TO_NULL_CUSTODIAN)!=0,
             "minter is not allowed to mint items to the null custodian"
+        );
+    }else if(to_custodian.value == ZSW_CUSTODIAN_NAME.value){
+        check(
+            (minter_perms & ZSW_ITEMS_PERMS_AUTHORIZE_MINT_TO_OTHER_CUSTODIANS)!=0 ||
+            (minter_perms & ZSW_ITEMS_PERMS_AUTHORIZE_MINT_TO_ZSW_CUSTODIAN)!=0,
+            "authorizer is not allowed to mint to other/zsw custodians"
         );
     }else if(to_custodian.value != minter.value){
         check(
