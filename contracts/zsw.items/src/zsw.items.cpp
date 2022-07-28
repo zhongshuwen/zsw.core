@@ -434,18 +434,26 @@ ACTION zswitems::mkitemtpl(
         ("item template with this id already exists (id=" + to_string(item_template_id) + ")").c_str()
     );
 
-    
-    check( item_type == 0, "only item_type 0 is currently supported!" );
+    //check that the item_type is not larger than the max currently supported value
+    check( item_type < 0b11, "item_type is not currently supported!" );
 
 
     vector<uint8_t> serialized_immutable_metadata;
     if(schema_name.value != name("").value){
         auto schema_itr = tbl_schemas.require_find(schema_name.value,"schema does not exist");
         serialized_immutable_metadata = serialize(immutable_metadata, schema_itr->format);
+        if((item_type&ITEM_TYPE_ENFORCE_TPL_METADATA_MAX_ALT_ID)!=0){
+            auto max_alt_id_itr = immutable_metadata.find("max_alt_id");
+            check(max_alt_id_itr != immutable_metadata.end(), "missing max_alt_id in template metadata");
+            check(std::holds_alternative<uint64_t>(max_alt_id_itr->second),"max_alt_id is present in template metadata but not a uint64_t");
+        }
     }else{
         check(immutable_metadata.empty(), "immutable_metadata must be empty if a schema is not specified!");
+        check((item_type&ITEM_TYPE_ENFORCE_TPL_METADATA_MAX_ALT_ID)==0,"max_alt_id can not be restricted if there is no metadata");
         serialized_immutable_metadata = {};
     }
+
+
 
     tbl_item_templates.emplace(creator, [&]( auto& _item_template ) {
         _item_template.zsw_id = zsw_id;
@@ -575,6 +583,23 @@ ACTION zswitems::mkitem(
         }else{
             deserialized_template_data = {};
         }
+    }
+    uint32_t item_tpl_item_type = item_template_itr->item_type;
+    if((item_tpl_item_type&ITEM_TYPE_UNIQUE_ALT_ID_FOR_ITEM_TPL_ITEMS)!=0){
+        // enforce unique high bits for item using item template
+        auto tbl_item_tpl_alt_ids = get_tbl_item_tpl_alt_ids(item_template_id);
+        check(tbl_item_tpl_alt_ids.find(GET_ITEM_ZSW_ID_ALT_ID(zsw_id)) == tbl_item_tpl_alt_ids.end(), "this item already exists in this template!");
+
+        tbl_item_tpl_alt_ids.emplace(authorized_minter, [&]( auto& _item_tpl_alt_ids ) {
+            _item_tpl_alt_ids.zsw_id = zsw_id;
+        });
+    }
+    if((item_tpl_item_type&ITEM_TYPE_ENFORCE_TPL_METADATA_MAX_ALT_ID)!=0){
+        // enforce tpl max_alt_id
+        auto max_alt_id_itr = deserialized_template_data.find("max_alt_id");
+        check(max_alt_id_itr != deserialized_template_data.end(), "missing max_alt_id in template metadata");
+        check(std::holds_alternative<uint64_t>(max_alt_id_itr->second),"max_alt_id is present in template metadata but not a uint64_t");
+        check(GET_ITEM_ZSW_ID_ALT_ID(zsw_id)<=std::get<uint64_t>(max_alt_id_itr->second),"item alt id exceeds max_alt_id");
     }
 
 
@@ -1553,6 +1578,9 @@ zswitems::t_item_balances zswitems::get_tbl_item_balances(name account) {
 }
 zswitems::t_frozen_balances zswitems::get_tbl_frozen_balances(uint64_t custodian_user_pair_id) {
     return zswitems::t_frozen_balances(get_self(), custodian_user_pair_id);
+}
+zswitems::t_item_tpl_alt_ids zswitems::get_tbl_item_tpl_alt_ids(uint64_t item_template_id) {
+    return zswitems::t_item_tpl_alt_ids(get_self(), item_template_id);
 }
 uint32_t zswitems::require_get_custodian_id_with_permissions(name account, uint128_t permissions) {
     if(account.value == NULL_CUSTODIAN_NAME.value){

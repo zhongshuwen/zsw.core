@@ -28,6 +28,10 @@ using namespace std;
 #define ITEM_CONFIG_ALLOW_NOTIFY (1 << 3)
 #define ITEM_CONFIG_ALLOW_MUTABLE_DATA (1 << 4)
 
+
+#define ITEM_TYPE_UNIQUE_ALT_ID_FOR_ITEM_TPL_ITEMS (1 << 0)
+#define ITEM_TYPE_ENFORCE_TPL_METADATA_MAX_ALT_ID (1 << 1)
+
 #define ITEM_BALANCE_STATUS_SECOND_HAND (1 << 0)
 #define ITEM_BALANCE_STATUS_AUTHORIZER_LOCKED (1 << 1)
 #define ITEM_BALANCE_STATUS_FROZEN (1 << 2)
@@ -57,6 +61,9 @@ using namespace std;
 
 #define CREATE_FROZEN_BALANCE_ID(item_id, freeze_time) \
    (((((uint64_t)item_id) & 0xffffffffff) << 24) | (((uint64_t)freeze_time) & 0xffffff))
+
+#define GET_ITEM_ZSW_ID_ALT_ID(zsw_id) \
+   ((zsw_id >> 64) & 0xffffffffffffffff)
 
 uint64_t static inline add_no_overflow(uint64_t a, uint64_t b)
 {
@@ -411,6 +418,12 @@ private:
       uint64_t primary_key() const { return item_id; }; // 8? = 52
    };
    typedef multi_index<name("itembalances"), s_itembalances> t_item_balances;
+   TABLE s_item_tpl_alt_ids
+   {
+      uint128_t zsw_id;                          // 16 = 16
+      uint64_t primary_key() const { return GET_ITEM_ZSW_ID_ALT_ID(zsw_id); }; // 24? = 16?
+   };
+   typedef multi_index<name("itemtplaltid"), s_item_tpl_alt_ids> t_item_tpl_alt_ids;
 
    t_schemas tbl_schemas = t_schemas(get_self(), get_self().value);
    t_issuerstatus tbl_issuerstatus = t_issuerstatus(get_self(), get_self().value);
@@ -423,6 +436,7 @@ private:
    t_items tbl_items = t_items(get_self(), get_self().value);
    t_item_balances get_tbl_item_balances(eosio::name account);
    t_frozen_balances get_tbl_frozen_balances(uint64_t custodian_user_pair_id);
+   t_item_tpl_alt_ids get_tbl_item_tpl_alt_ids(uint64_t item_template_id);
 
    uint32_t require_get_custodian_id_with_permissions(eosio::name account, uint128_t permissions);
 
