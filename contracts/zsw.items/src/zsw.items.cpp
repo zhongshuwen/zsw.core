@@ -435,7 +435,7 @@ ACTION zswitems::mkitemtpl(
     );
 
     //check that the item_type is not larger than the max currently supported value
-    check( item_type < 0b11, "item_type is not currently supported!" );
+    check( item_type <= 0b111, "item_type is not currently supported!" );
 
 
     vector<uint8_t> serialized_immutable_metadata;
@@ -600,6 +600,9 @@ ACTION zswitems::mkitem(
         check(max_alt_id_itr != deserialized_template_data.end(), "missing max_alt_id in template metadata");
         check(std::holds_alternative<uint64_t>(max_alt_id_itr->second),"max_alt_id is present in template metadata but not a uint64_t");
         check(GET_ITEM_ZSW_ID_ALT_ID(zsw_id)<=std::get<uint64_t>(max_alt_id_itr->second),"item alt id exceeds max_alt_id");
+    }
+    if((item_tpl_item_type&ITEM_TYPE_ENFORCE_TPL_METADATA_MAX_ALT_ID_LAST_20_BITS_IN_TYPE)!=0){
+        check(GET_ITEM_ZSW_ID_ALT_ID(zsw_id)<=((item_tpl_item_type>>12)&0xfffff),"item alt id exceeds max_alt_id");
     }
 
 
