@@ -225,19 +225,23 @@ public:
    ACTION logtransfer(
        name authorizer,
        uint64_t collection_id,
+       name collection_id_as_name,
        name from,
        name to,
        name from_custodian,
        name to_custodian,
        std::vector<uint64_t> item_ids,
+       std::vector<uint64_t> item_template_ids,
        std::vector<uint64_t> amounts,
        string memo);
    ACTION logmint(
        name minter,
        uint64_t collection_id,
+       name collection_id_as_name,
        name to,
        name to_custodian,
        vector<uint64_t> item_ids,
+       std::vector<uint64_t> item_template_ids,
        vector<uint64_t> amounts,
        string memo);
 

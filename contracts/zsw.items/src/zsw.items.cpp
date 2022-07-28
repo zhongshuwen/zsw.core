@@ -750,11 +750,13 @@ ACTION zswitems::logmkitem(
 ACTION zswitems::logtransfer(
     name authorizer,
     uint64_t collection_id,
+    name collection_id_as_name,
     name from,
     name to,
     name from_custodian,
     name to_custodian,
     vector <uint64_t> item_ids,
+    vector <uint64_t> item_template_ids,
     vector <uint64_t> amounts,
     string memo
 ) {
@@ -766,9 +768,11 @@ ACTION zswitems::logtransfer(
 ACTION zswitems::logmint(
     name minter,
     uint64_t collection_id,
+    name collection_id_as_name,
     name to,
     name to_custodian,
     vector <uint64_t> item_ids,
+    vector <uint64_t> item_template_ids,
     vector <uint64_t> amounts,
     string memo
 ) {
@@ -1075,6 +1079,7 @@ void zswitems::internal_transfer(
 
 
     std::map <uint64_t, vector <uint64_t>> collection_to_item_ids_transferred = {};
+    std::map <uint64_t, vector <uint64_t>> collection_to_item_template_ids_transferred = {};
     std::map <uint64_t, vector <uint64_t>> collection_to_item_amounts_transferred = {}; 
     uint64_t from_custodian_user_pair_id = get_custodian_user_pair_id(scope_payer, from_custodian, from);
     uint64_t to_custodian_user_pair_id = get_custodian_user_pair_id(scope_payer, to_custodian, to);
@@ -1101,9 +1106,12 @@ void zswitems::internal_transfer(
         if (collection_to_item_ids_transferred.find(item_itr->collection_id) !=
             collection_to_item_ids_transferred.end()) {
             collection_to_item_ids_transferred[item_itr->collection_id].push_back(item_id);
+            collection_to_item_template_ids_transferred[item_itr->collection_id].push_back(item_itr->item_template_id);
             collection_to_item_amounts_transferred[item_itr->collection_id].push_back(amount);
         } else {
             collection_to_item_ids_transferred[item_itr->collection_id] = {item_id};
+            collection_to_item_ids_transferred[item_itr->collection_id] = {item_id};
+            collection_to_item_template_ids_transferred[item_itr->collection_id] = {item_itr->item_template_id};
             collection_to_item_amounts_transferred[item_itr->collection_id] = {amount};
         }
         sub_from_user_balance(
@@ -1136,7 +1144,7 @@ void zswitems::internal_transfer(
             permission_level{get_self(), name("active")},
             get_self(),
             name("logtransfer"),
-            make_tuple(authorizer, collection, from, to, from_custodian, to_custodian, item_ids_transferred, collection_to_item_amounts_transferred[collection], memo)
+            make_tuple(authorizer, collection, name(collection),from, to, from_custodian, to_custodian, item_ids_transferred, collection_to_item_amounts_transferred[collection], collection_to_item_template_ids_transferred[collection], memo)
         ).send();
     }
 }
@@ -1203,6 +1211,7 @@ void zswitems::internal_mint(
     
 
     std::map <uint64_t, vector <uint64_t>> collection_to_item_ids_transferred = {};
+    std::map <uint64_t, vector <uint64_t>> collection_to_item_template_ids_transferred = {};
     std::map <uint64_t, vector <uint64_t>> collection_to_item_amounts_transferred = {};
     std::map <uint64_t, uint64_t> collection_id_minted_count ={};
     int32_t index = 0;
@@ -1238,10 +1247,13 @@ void zswitems::internal_mint(
         if (collection_to_item_ids_transferred.find(collection_id) !=
             collection_to_item_ids_transferred.end()) {
             collection_to_item_ids_transferred[collection_id].push_back(item_id);
+            collection_to_item_template_ids_transferred[item_itr->collection_id].push_back(item_itr->item_template_id);
             collection_to_item_amounts_transferred[collection_id].push_back(amount);
+            
             collection_id_minted_count[collection_id] += amount;
         } else {
             collection_to_item_ids_transferred[collection_id] = {item_id};
+            collection_to_item_template_ids_transferred[collection_id] = {item_itr->item_template_id};
             collection_to_item_amounts_transferred[collection_id] = {amount};
             collection_id_minted_count[collection_id] = amount;
         }
@@ -1277,7 +1289,7 @@ void zswitems::internal_mint(
             permission_level{get_self(), name("active")},
             get_self(),
             name("logmint"),
-            make_tuple(minter, collection, to, to_custodian, item_ids_minted, collection_to_item_amounts_transferred[collection], memo)
+            make_tuple(minter, collection, name(collection), to, to_custodian, item_ids_minted, collection_to_item_amounts_transferred[collection], collection_to_item_template_ids_transferred[collection], memo)
         ).send();
     }
 }
