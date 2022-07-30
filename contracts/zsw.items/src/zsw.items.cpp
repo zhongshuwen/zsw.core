@@ -1172,7 +1172,7 @@ void zswitems::internal_transfer(
             permission_level{get_self(), name("active")},
             get_self(),
             name("logtransfer"),
-            make_tuple(authorizer, collection, name(collection),from, to, from_custodian, to_custodian, item_ids_transferred, collection_to_item_amounts_transferred[collection], collection_to_item_template_ids_transferred[collection], memo)
+            make_tuple(authorizer, collection, name(collection),from, to, from_custodian, to_custodian, item_ids_transferred, collection_to_item_template_ids_transferred[collection], collection_to_item_amounts_transferred[collection], memo)
         ).send();
     }
 }
@@ -1317,7 +1317,7 @@ void zswitems::internal_mint(
             permission_level{get_self(), name("active")},
             get_self(),
             name("logmint"),
-            make_tuple(minter, collection, name(collection), to, to_custodian, item_ids_minted, collection_to_item_amounts_transferred[collection], collection_to_item_template_ids_transferred[collection], memo)
+            make_tuple(minter, collection, name(collection), to, to_custodian, item_ids_minted, collection_to_item_template_ids_transferred[collection], collection_to_item_amounts_transferred[collection], memo)
         ).send();
     }
 }
