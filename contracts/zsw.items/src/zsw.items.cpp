@@ -434,8 +434,8 @@ ACTION zswitems::mkitemtpl(
         ("item template with this id already exists (id=" + to_string(item_template_id) + ")").c_str()
     );
 
-    //check that the item_type is not larger than the max currently supported value
-    check( item_type <= 0b111, "item_type is not currently supported!" );
+    //check that the item_type is not larger than the max currently supported value or that we are in 20 bit mode
+    check( ((item_type & ITEM_TYPE_ENFORCE_TPL_METADATA_MAX_ALT_ID_LAST_20_BITS_IN_TYPE) != 0) || item_type <= 0b111, "item_type is not currently supported!" );
 
 
     vector<uint8_t> serialized_immutable_metadata;
